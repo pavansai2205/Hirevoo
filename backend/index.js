@@ -9,7 +9,7 @@ import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import path from "path";
 
-dotenv.config({});
+dotenv.config({ path: "../.env" });
 
 const app = express();
 
@@ -17,17 +17,20 @@ const __dirname = path.resolve();
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 const corsOptions = {
-    origin:'https://hirevoo.onrender.com/',
-    credentials:true
-}
-  
+  origin: function (origin, callback) {
+    // Dynamically allow any origin (useful for EC2 instances with changing IPs)
+    // In a strict production environment, check against a list of allowed origins or regex
+    callback(null, true);
+  },
+  credentials: true,
+};
+
 app.use(cors(corsOptions));
 
 const PORT = process.env.PORT || 3000;
-
 
 // api's
 app.use("/api/v1/user", userRoute);
@@ -36,11 +39,11 @@ app.use("/api/v1/job", jobRoute);
 app.use("/api/v1/application", applicationRoute);
 
 app.use(express.static(path.join(__dirname, "/frontend/dist")));
-app.get("*", (_,res) => {
+app.get("*", (_, res) => {
   res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
-app.listen(PORT,()=>{
-    connectDB();
-    console.log(`Server running at port ${PORT}`);
-})
+app.listen(PORT, () => {
+  connectDB();
+  console.log(`Server running at port ${PORT}`);
+});

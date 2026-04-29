@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  backend:
+    build: ./backend
+    image: pavansai2205/hirevoo-backend:latest
+    container_name: backend
+    restart: always
+    ports:
+      - "8000:8000"
+    environment:
+      NODE_ENV: production
+      PORT: 8000
+      FRONTEND_URL: http://localhost:3000
+      MONGO_URI: mongodb+srv://saipavan931:FzYRSKO1B1F5ywU4@cluster0.9h5k0ql.mongodb.net/hirevoo?retryWrites=true&w=majority&appName=Cluster0
+      SECRET_KEY: mysecretkey123
+      CLOUD_NAME: dgppscxvk
+      API_KEY: 455228572646965
+      API_SECRET: S-8XgspK1OgHL65PdyhtAC-GKpE
+
+  frontend:
+    build: ./frontend
+    image: pavansai2205/hirevoo-frontend:latest
+    container_name: frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
